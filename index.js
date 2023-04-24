@@ -14,6 +14,11 @@ app.use(morgan('common'));
 const accessLog = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
 app.use(morgan('combined', {stream: accessLog}));
 
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send(' Something broke :( ');
+  });
+
 
 app.get('/movies', (req, res) => {
    // Filler list for now
@@ -62,14 +67,16 @@ app.get('/movies', (req, res) => {
     res.json(myMovies);
 })
 
+// Default greeting message
 app.get('/', (req,res) => {
     res.send('Welcome to my API!');
 });
 
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send(' Something broke :( ');
-  });
+// Route /documentation to its html file
+app.get('/documentation', (req,res) => {
+    res.sendFile('public/Documentation.html', {root: __dirname});     
+});
+
 
  
 app.listen(8080, () => {
