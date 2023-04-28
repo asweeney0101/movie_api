@@ -147,27 +147,6 @@ app.post('/users', (req,res) => {
 })
 
 
-// Update   // Update 
-
-app.put('/users/:id', (req,res) => {
-    const { id } = req.params;
-    const updatedUser = req.body;
-
-    let user = users.find( user => user.id == id );
-
-    if (user) {
-        user.name = updatedUser.name;
-        res.status(200).json(user);
-    } else {
-        res.status(400).send('user does not exist')
-    }
-})
-
-
-
-
-
-
 // Read   // Read 
  
 app.get('/documentation', (req,res) => {
@@ -212,8 +191,65 @@ app.get('/movies/directors/:directorName', (req, res) => {
 })
 
 
+// Update   // Update 
+
+app.put('/users/:id', (req,res) => {
+    const { id } = req.params;
+    const updatedUser = req.body;
+
+    let user = users.find( user => user.id == id );
+
+    if (user) {
+        user.name = updatedUser.name;
+        res.status(200).json(user);
+    } else {
+        res.status(400).send('user does not exist')
+    }
+})
+
+app.put('/users/:id/:movieTitle', (req,res) => {
+    const { id, movieTitle } = req.params;
+    
+    let user = users.find( user => user.id == id );
+    let name = user.name;
+    if (user) {
+        user.favoriteMovies.push(movieTitle);
+        res.status(200).send(`${movieTitle} has been added to ${name}'s favorites`);
+    } else {
+        res.status(400).send('user does not exist')
+    }
+})
 
 
+// Delete   // Delete
+
+app.delete('/users/:id/:movieTitle', (req,res) => {
+    const { id, movieTitle } = req.params;
+    
+    let user = users.find( user => user.id == id );
+    let name = user.name;
+
+    if (user) {
+        user.favoriteMovies = user.favoriteMovies.filter( title => title !== movieTitle);
+        res.status(200).send(`${movieTitle} has been removed from ${name}'s favorites`);
+    } else {
+        res.status(400).send('user does not exist')
+    }
+})
+ 
+app.delete('/users/:id', (req,res) => {
+    const { id } = req.params;
+    
+    let user = users.find( user => user.id == id );
+    let name = user.name;
+
+    if (user) {
+        users = users.filter( user => user.id !== id);
+        res.status(200).send(`user ${id} '${name}' has been removed from database`);
+    } else {
+        res.status(400).send('user does not exist')
+    }
+})
  
 
 
