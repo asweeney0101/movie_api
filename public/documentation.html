@@ -9,7 +9,65 @@
 </head>
 
 <body>
-    <p> Test Documentation</p>
+    <header>
+        <h1>MyFlix API Documentation</h1>
+    </header>
+
+    <div class="endpoint">
+        <h2> /users (Post) </h2>
+        <p> Allows a new user to regiser, automatically assigns them a unique ID.
+        </p>
+    </div>
+
+    <div class="endpoint">
+        <h2> /movies (Get) </h2>
+        <p> Returns a list of all movies in the database.
+        </p>
+    </div>
+
+    <div class="endpoint">
+        <h2> /movies/:title (Get) </h2>
+        <p> Returns a JSON with information of the movie matching that specified title.
+        </p>
+    </div>
+
+    <div class="endpoint">
+        <h2> /movies/genres/:genreName (Get) </h2>
+        <p> Returns a description of that genre.
+        </p>
+    </div>
+
+    <div class="endpoint">
+        <h2> /movies/directors/:directorName (Get) </h2>
+        <p> Returns a description of the specified Director.
+        </p>
+    </div>
+
+    <div class="endpoint">
+        <h2> /users/:id (Put) </h2>
+        <p> Updates the user's name in the system. Updated name needs to be typed in the request body.
+        </p>
+    </div>
+
+    <div class="endpoint">
+        <h2> /users/:id/:movieTitle (Put) </h2>
+        <p> Adds the movie typed at the end of the URL to the specified user's favorites list.
+        </p>
+    </div>
+
+    <div class="endpoint">
+        <h2> /users/:id/:movieTitle (Delete) </h2>
+        <p> Removes the movie typed at the end of the URL from the specified user's favorites list.
+        </p>
+    </div>
+
+    <div class="endpoint">
+        <h2> /users/:id (Delete) </h2>
+        <p> Allows the user to unregister from the system.
+        </p>
+    </div>
+
+
 
 </body>
 </html>

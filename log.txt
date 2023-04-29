@@ -96,3 +96,7 @@
 ::ffff:127.0.0.1 - - [28/Apr/2023:23:30:50 +0000] "DELETE /users/3/Tenet HTTP/1.1" 200 44 "-" "PostmanRuntime/7.32.2"
 ::ffff:127.0.0.1 - - [28/Apr/2023:23:35:39 +0000] "DELETE /users/3 HTTP/1.1" 200 49 "-" "PostmanRuntime/7.32.2"
 ::ffff:127.0.0.1 - - [28/Apr/2023:23:37:34 +0000] "DELETE /users/3 HTTP/1.1" 200 132 "-" "PostmanRuntime/7.32.2"
+::ffff:127.0.0.1 - - [28/Apr/2023:23:47:03 +0000] "GET /documentation HTTP/1.1" 200 508 "-" "PostmanRuntime/7.32.2"
+::ffff:127.0.0.1 - - [28/Apr/2023:23:47:48 +0000] "GET /documentation HTTP/1.1" 200 500 "-" "PostmanRuntime/7.32.2"
+::ffff:127.0.0.1 - - [28/Apr/2023:23:51:05 +0000] "GET /movies/directors/Christopher%20Nolan HTTP/1.1" 200 266 "-" "PostmanRuntime/7.32.2"
+::ffff:127.0.0.1 - - [28/Apr/2023:23:59:25 +0000] "GET /documentation HTTP/1.1" 200 1884 "-" "PostmanRuntime/7.32.2"
