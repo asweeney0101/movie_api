@@ -16,6 +16,7 @@ const express = require('express'),
 app.use(express.static('public'));    
 app.use(morgan('common'));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Logging when the API is accessed
 const accessLog = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
@@ -134,17 +135,32 @@ let users = [
 
 // Create  // Create
 
-app.post('/users', (req,res) => {
-    const newUser = req.body;
+app.post('/users', (req, res) => {
+    users.findOne({ Username: req.body.Username })
+      .then((user) => {
+        if (user) {
+          return res.status(400).send(req.body.Username + 'already exists');
+        } else {
+          users
+            .create({
+              Username: req.body.Username,
+              Password: req.body.Password,
+              Email: req.body.Email,
+              Birthday: req.body.Birthday
+            })
+            .then((user) =>{res.status(201).json(user) })
+          .catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+          })
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+      });
+  });
 
-    if (newUser.name) {
-        newUser.id = uuid.v4();
-        users.push(newUser);
-        res.status(201).json(newUser);
-    } else {
-        res.status(400).send('please give user a name')
-    }
-})
 
 
 // Read   // Read 
@@ -153,9 +169,31 @@ app.get('/documentation', (req,res) => {
     res.sendFile('public/Documentation.html', {root: __dirname});     
 });
 
+app.get('/users', (req, res) => {
+    Users.find()
+      .then((users) => {
+        res.status(201).json(users);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      });
+  });
+
+  app.get('/users/:Username', (req, res) => {
+    users.findOne({ Username: req.params.Username })
+      .then((user) => {
+        res.json(user);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      });
+  });
+
 app.get('/movies', (req, res) => {
     res.status(200).json(movies);
-})
+});
 
 app.get('/movies/:title', (req, res) => {
     const { title } = req.params;
@@ -166,7 +204,7 @@ app.get('/movies/:title', (req, res) => {
     } else {
         res.status(400).send('movie does not exist, please check spelling')
     }
-})
+});
 
 app.get('/movies/genres/:genreName', (req, res) => {
     const { genreName } = req.params;
@@ -177,7 +215,7 @@ app.get('/movies/genres/:genreName', (req, res) => {
     } else {
         res.status(400).send('genre does not exist, please check spelling')
     }
-})
+});
 
 app.get('/movies/directors/:directorName', (req, res) => {
     const { directorName } = req.params;
@@ -188,24 +226,30 @@ app.get('/movies/directors/:directorName', (req, res) => {
     } else {
         res.status(400).send('director does not exist, please check spelling')
     }
-})
+});
 
 
 // Update   // Update 
 
-app.put('/users/:id', (req,res) => {
-    const { id } = req.params;
-    const updatedUser = req.body;
-
-    let user = users.find( user => user.id == id );
-
-    if (user) {
-        user.name = updatedUser.name;
-        res.status(200).json(user);
-    } else {
-        res.status(400).send('user does not exist')
-    }
-})
+app.put('/users/:Username', (req, res) => {
+    users.findOneAndUpdate({ Username: req.params.Username }, { $set:
+      {
+        Username: req.body.Username,
+        Password: req.body.Password,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday
+      }
+    },
+    { new: true }, // This line makes sure that the updated document is returned
+    (err, updatedUser) => {
+      if(err) {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      } else {
+        res.json(updatedUser);
+      }
+    });
+  });
 
 app.put('/users/:id/:movieTitle', (req,res) => {
     const { id, movieTitle } = req.params;
@@ -218,7 +262,7 @@ app.put('/users/:id/:movieTitle', (req,res) => {
     } else {
         res.status(400).send('user does not exist')
     }
-})
+});
 
 
 // Delete   // Delete
@@ -235,7 +279,7 @@ app.delete('/users/:id/:movieTitle', (req,res) => {
     } else {
         res.status(400).send('user does not exist')
     }
-})
+});
  
 app.delete('/users/:id', (req,res) => {
     const { id } = req.params;
@@ -249,7 +293,7 @@ app.delete('/users/:id', (req,res) => {
     } else {
         res.status(400).send('user does not exist')
     }
-})
+});
  
 
 
