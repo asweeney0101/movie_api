@@ -18,6 +18,14 @@ app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect('mongodb+srv://ajsweeney2324:test1234@cluster0.gdtbrp2.mongodb.net/myFlixDB', {useNewUrlParser: true, useUnifiedTopology: true });
+
 // Logging when the API is accessed
 const accessLog = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
 app.use(morgan('combined', {stream: accessLog}));
@@ -136,12 +144,12 @@ let users = [
 // Create  // Create
 
 app.post('/users', (req, res) => {
-    users.findOne({ Username: req.body.Username })
+    Users.find({ Username: req.body.Username })
       .then((user) => {
         if (user) {
           return res.status(400).send(req.body.Username + 'already exists');
         } else {
-          users
+          Users
             .create({
               Username: req.body.Username,
               Password: req.body.Password,
@@ -251,18 +259,20 @@ app.put('/users/:Username', (req, res) => {
     });
   });
 
-app.put('/users/:id/:movieTitle', (req,res) => {
-    const { id, movieTitle } = req.params;
-    
-    let user = users.find( user => user.id == id );
-    let name = user.name;
-    if (user) {
-        user.favoriteMovies.push(movieTitle);
-        res.status(200).send(`${movieTitle} has been added to ${name}'s favorites`);
-    } else {
-        res.status(400).send('user does not exist')
-    }
-});
+  app.post('/users/:Username/movies/:MovieID', (req, res) => {
+    Users.findOneAndUpdate({ Username: req.params.Username }, {
+       $push: { FavoriteMovies: req.params.MovieID }
+     },
+     { new: true }, // This line makes sure that the updated document is returned
+    (err, updatedUser) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      } else {
+        res.json(updatedUser);
+      }
+    });
+  });
 
 
 // Delete   // Delete
