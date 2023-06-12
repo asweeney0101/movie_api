@@ -18,6 +18,11 @@ app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+let auth = require('./auth')(app);
+
+const passport = require('passport');
+require('./passport');
+
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 
@@ -31,6 +36,7 @@ const accessLog = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 
 app.use(morgan('combined', {stream: accessLog}));
 
 // Error Message
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send(' Something broke :( ');
@@ -199,9 +205,17 @@ app.get('/users', (req, res) => {
       });
   });
 
-app.get('/movies', (req, res) => {
-    res.status(200).json(movies);
-});
+app.get('/movies', passport.authenticate('jwt', 
+  { session: false }), (req, res) => {
+    Movies.find()
+      .then((movies) => {
+        res.status(201).json(movies);
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+      });
+  });
 
 app.get('/movies/:title', (req, res) => {
     const { title } = req.params;
