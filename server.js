@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
-// npm run dev
+// npm run devStart
+
 
 const express = require('express'),
     morgan = require('morgan'),
@@ -12,6 +13,7 @@ const express = require('express'),
 
     app = express();
 
+const passport = require('passport');
 // Middleware to use our consts   
 app.use(express.static('public'));    
 app.use(morgan('common'));
@@ -20,7 +22,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 let auth = require('./auth')(app);
 
-const passport = require('passport');
 require('./passport');
 
 const mongoose = require('mongoose');
@@ -150,30 +151,32 @@ let users = [
 // Create  // Create
 
 app.post('/users', (req, res) => {
-    Users.findOne({ Username: req.body.Username })
-      .then((user) => {
-        if (user) {
-          return res.status(400).send(req.body.Username + ' already exists');
-        } else {
-          Users
-            .create({
-              Username: req.body.Username,
-              Password: req.body.Password,
-              Email: req.body.Email,
-              Birthday: req.body.Birthday
-            })
-            .then((user) =>{res.status(201).json(user) })
+  let hashedPassword = Users.hashPassword(req.body.Password);
+  Users.findOne({ Username: req.body.Username }) // Search to see if a user with the requested username already exists
+    .then((user) => {
+      if (user) {
+      //If the user is found, send a response that it already exists
+        return res.status(400).send(req.body.Username + ' already exists');
+      } else {
+        Users
+          .create({
+            Username: req.body.Username,
+            Password: hashedPassword,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
+          })
+          .then((user) => { res.status(201).json(user) })
           .catch((error) => {
             console.error(error);
             res.status(500).send('Error: ' + error);
-          })
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        res.status(500).send('Error: ' + error);
-      });
-  });
+          });
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
+    });
+});
 
 
 // Read   // Read 
