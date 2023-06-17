@@ -20,6 +20,26 @@ app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const cors = require('cors');
+
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if(!origin) return callback(null, true);
+    // If a specific origin isn’t found on the list of allowed origins
+    if(allowedOrigins.indexOf(origin) === -1){ 
+      let message = 'The CORS policy for this application doesn`t allow access from origin ' + origin;
+      return callback(new Error(message ), false);
+    }
+    return callback(null, true);
+  }
+}));
+
+const { check, validationResult } = require('express-validator');
+
+
+
 let auth = require('./auth')(app);
 
 require('./passport');
@@ -30,7 +50,8 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 
-mongoose.connect('mongodb+srv://ajsweeney2324:test1234@cluster0.gdtbrp2.mongodb.net/myFlixDB', {useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://ajsweeney2324:test1234@cluster0.gdtbrp2.mongodb.net/myFlixDB', 
+{useNewUrlParser: true, useUnifiedTopology: true });
 
 // Logging when the API is accessed
 const accessLog = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
@@ -128,31 +149,26 @@ let movies = [
 
 ];
 
-// Filler user list
-let users = [
-    {
-        "name": "Jon",
-        "favoriteMovies": ["The Lion King", "Tenet"],
-        "id": "1"
-    },
-    {
-        "name": "Jacob",
-        "favoriteMovies": ["Inception", "Coco"],
-        "id": "2"
-    },
-    {
-        "name": "Jose",
-        "favoriteMovies": [],
-        "id": "3"
-    }
-]
 
 
 // Create  // Create
 
-app.post('/users', (req, res) => {
+app.post('/users',
+[
+  check('Username', 'Username must be at least 5 characters').isLength({min: 6}),
+  check('Username', 'Username contains non alphanumeric characters').isAlphanumeric(),
+  check('Password', 'Password must be at least 6 characters').isLength({min: 6}),
+  check('Email', 'Email does not appear to be valid').isEmail()
+], (req, res) => {
+  let errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
   let hashedPassword = Users.hashPassword(req.body.Password);
-  Users.findOne({ Username: req.body.Username }) // Search to see if a user with the requested username already exists
+  // Search to see if a user with the requested username already exists
+  Users.findOne({ Username: req.body.Username }) 
     .then((user) => {
       if (user) {
       //If the user is found, send a response that it already exists
