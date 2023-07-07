@@ -151,6 +151,8 @@ app.get('/users', passport.authenticate('jwt', { session: false }),
   });
 
   app.get('/movies',
+
+  // arbitrary change for the github practice
    (req, res) => {
     Movies.find()
       .then((movies) => {
