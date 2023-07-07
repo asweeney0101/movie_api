@@ -72,7 +72,7 @@ app.listen(port, '0.0.0.0', () => {
 
 // Default greeting message
 app.get('/', (req,res) => {
-    res.status(200).send('Welcome to the myFlix API!');
+    res.status(200).send('Welcome to the myFlix API!!!!');
 });
 
 
