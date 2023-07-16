@@ -202,3 +202,7 @@
 ::ffff:127.0.0.1 - - [16/Jun/2023:23:15:35 +0000] "POST /users HTTP/1.1" 422 365 "-" "PostmanRuntime/7.32.2"
 ::ffff:127.0.0.1 - - [16/Jun/2023:23:17:05 +0000] "POST /users HTTP/1.1" 400 24 "-" "PostmanRuntime/7.32.2"
 ::ffff:127.0.0.1 - - [16/Jun/2023:23:17:10 +0000] "POST /users HTTP/1.1" 201 232 "-" "PostmanRuntime/7.32.2"
+127.0.0.1 - - [16/Jul/2023:02:51:11 +0000] "GET / HTTP/1.1" 200 29 "-" "PostmanRuntime/7.32.3"
+127.0.0.1 - - [16/Jul/2023:02:51:14 +0000] "GET /documentation HTTP/1.1" 200 2141 "-" "PostmanRuntime/7.32.3"
+127.0.0.1 - - [16/Jul/2023:02:51:28 +0000] "GET /movies HTTP/1.1" 401 - "-" "PostmanRuntime/7.32.3"
+127.0.0.1 - - [16/Jul/2023:02:52:22 +0000] "GET /movies HTTP/1.1" 201 8133 "-" "PostmanRuntime/7.32.3"
