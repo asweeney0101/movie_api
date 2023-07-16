@@ -126,7 +126,7 @@ app.get('/documentation', (req,res) => {
     res.sendFile('public/Documentation.html', {root: __dirname});     
 });
 
-app.get('/users', passport.authenticate('jwt', { session: false }),
+app.get('/users',
  (req, res) => {
     Users.find()
       .then((users) => {
