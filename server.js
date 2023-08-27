@@ -205,11 +205,11 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),
       { Username: req.params.Username }, 
       { $set:
         {
-          Name: req.body.Name,
           Username: req.body.Username,
           Password: req.body.Password,
           Email: req.body.Email,
-          Birthday: req.body.Birthday
+          Birthday: req.body.Birthday,
+          Name: req.body.Name
         }
       },
       { new: true }  // This line makes sure that the updated document is returned
