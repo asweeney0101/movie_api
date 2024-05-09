@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const cors = require('cors');
 
-let allowedOrigins = ['http://localhost:8080', 'http://localhost:8000', 'http://localhost:1234', 'https://my-flix-ajs.netlify.app' ];
+let allowedOrigins = ['http://localhost:8080', 'http://localhost:8000', 'http://localhost:1234', 'https://my-flix-ajs.netlify.app', 'http://localhost:4000' ];
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -78,6 +78,14 @@ app.get('/', (req,res) => {
 
 
 // Create  // Create
+/** Methods 
+ */
+
+/**
+ * post: /users
+ * This method is for creating a user
+ * Will check the database first to see if a user with that username exists yet
+ */
 
 app.post('/users',
 [
@@ -128,6 +136,8 @@ app.get('/documentation', (req,res) => {
     res.sendFile('public/Documentation.html', {root: __dirname});     
 });
 
+
+
 app.get('/users', passport.authenticate('jwt', { session: false }),
  (req, res) => {
     Users.find()
@@ -140,6 +150,10 @@ app.get('/users', passport.authenticate('jwt', { session: false }),
       });
   });
 
+  /**
+ * get: /users/:Username
+ * This method will get the user of whatever username is entered
+ */
   app.get('/users/:Username', passport.authenticate('jwt', { session: false }),
    (req, res) => {
     Users.findOne({ Username: req.params.Username })
@@ -152,6 +166,10 @@ app.get('/users', passport.authenticate('jwt', { session: false }),
       });
   });
 
+  /**
+   * get: /movies
+   * This method will get all movies from the database
+   */
   app.get('/movies', passport.authenticate('jwt', { session: false }),
    (req, res) => {
     Movies.find()
@@ -164,6 +182,10 @@ app.get('/users', passport.authenticate('jwt', { session: false }),
       });
   });
 
+  /**
+ * get: /movies/:title
+ * This method will get a movie from the database that matches the title
+ */
 app.get('/movies/:title', (req, res) => {
     const { title } = req.params;
     const movie = Movies.find( movie => movie.Title.toLowerCase() === title.toLowerCase() );
@@ -175,6 +197,10 @@ app.get('/movies/:title', (req, res) => {
     }
 });
 
+/**
+ * get: /movies/gentres/:genreName
+ * This method will get a description of the given genre
+ */
 app.get('/movies/genres/:genreName', (req, res) => {
     const { genreName } = req.params;
     const genre = movies.find( movie => movie.Genre.Name.toLowerCase() === genreName.toLowerCase() ).Genre;
@@ -186,6 +212,10 @@ app.get('/movies/genres/:genreName', (req, res) => {
     }
 });
 
+/**
+ * get: /movies/directors/:directorName
+ * This method will get the biography of the named director
+ */
 app.get('/movies/directors/:directorName', (req, res) => {
     const { directorName } = req.params;
     const director = movies.find( movie => movie.Director.Name.toLowerCase() === directorName.toLowerCase() ).Director;
@@ -200,7 +230,10 @@ app.get('/movies/directors/:directorName', (req, res) => {
 
 // Update   // Update 
 
-
+/**
+ * put: /users/:Username
+ * This method will update all user information
+ */
 app.put('/users/:Username', passport.authenticate('jwt', { session: false }), 
 (req, res) => {
   let hashedPassword = Users.hashPassword(req.body.Password);
@@ -226,7 +259,10 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),
     });
   });
 
-
+/**
+ * put: /user/:Username/movies/:MovieID
+ * This method will add a movie to the user's favorite movies
+ */
   app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), 
   (req, res) => {
     Users.findOneAndUpdate({ Username: req.params.Username }, {
@@ -247,6 +283,10 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),
 
 // Delete   // Delete
 
+/**
+ * delete: /users/:Username/movies/:MovieID
+ * This method will remove a movie from the user's favorite movies
+ */
  app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }),
  (req,res) => {
     Users.findOneAndUpdate({ Username: req.params.Username }, {
@@ -263,6 +303,10 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),
     });
  });
  
+ /**
+ * delete: /users/:Username
+ * This method will delete the given user profile
+ */
  app.delete('/users/:Username', (req, res) => {
     Users.findOneAndRemove({ Username: req.params.Username })
       .then((user) => {
