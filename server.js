@@ -22,7 +22,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const cors = require('cors');
 
-let allowedOrigins = ['http://localhost:8080', 'http://localhost:8000', 'http://localhost:1234', 'https://my-flix-ajs.netlify.app', 'http://localhost:4000' ];
+let allowedOrigins = ['http://localhost:8080', 'http://localhost:8000', 
+'http://localhost:1234', 'https://my-flix-ajs.netlify.app', 'http://localhost:4000', 'https://phenomenal-pothos-a6fedb.netlify.app/' ];
 
 app.use(cors({
   origin: (origin, callback) => {
