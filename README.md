@@ -3,8 +3,7 @@
 ## Description
 
 A full stack application built on the MERN stack.
-We will be building a front end where users can find information about their favorite movies.
+We will be building a front end that makes calls to this API.  
 
-We are creating a database in MongoDB, building a JS application that runs on Node for the backend
-Database will hold user information, and all the movies and their related information.  
+The API is a Node application that connects to a database in MongoDB, where we will store user and movie data.   
 
